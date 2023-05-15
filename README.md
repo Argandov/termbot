@@ -3,6 +3,8 @@ CLI tool for interacting with GPT, analyze local files, etc.
 
 `termbot.py` is a Python script that allows the user to interact with OpenAI's GPT-3 natural language processing system in the terminal. It allows for both interactive mode and prompt mode, where it can analyze text data and generate text responses based on the provided prompts.
 
+![termbot-prompt-mode Image](termbot-prompt-mode.png)
+
 ### Requirements for Installation
 1. A valid OpenAI API key.
 2. Python 3.x
