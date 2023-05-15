@@ -12,6 +12,7 @@ CLI tool for interacting with GPT, analyze local files, etc.
 
 ### Installation/Setup:
 
+* For now, we can move `sudo mv termbot.py /usr/local/bin/termbot` and `chmod u+x /usr/local/bin/termbot` to launch it from anywhere.
 * Create a .env file with `OPENAI_API_KEY = "XXXXXXXXXX"` in $HOME folder, `chmod 600 $HOME/.env` and add the path to the script:
 `config = dotenv_values(".env")` (For now)
 * By default, it uses GPT-3.5-TURBO. Change `OPENAI_MODEL = "gpt-3.5-turbo"` variable for another model if desired.
