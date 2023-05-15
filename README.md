@@ -16,6 +16,7 @@ CLI tool for interacting with GPT, analyze local files, etc.
 * Create a .env file with `OPENAI_API_KEY = "XXXXXXXXXX"` in $HOME folder, `chmod 600 $HOME/.env` and add the path to the script:
 `config = dotenv_values(".env")` (For now)
 * By default, it uses GPT-3.5-TURBO. Change `OPENAI_MODEL = "gpt-3.5-turbo"` variable for another model if desired.
+* Change `mood` variable for giving termbot a default context
 
 ### Usage
 The following command line arguments are available for `termbot.py`:
