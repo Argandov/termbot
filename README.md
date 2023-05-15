@@ -24,6 +24,7 @@ The following command line arguments are available for `termbot.py`:
 --silent, -s        Don't print banner.
 --examples, -e      Print some example usage.
 ```
+*Currently "Silent" and "Verbose" mode are Work In Progress.
 
 #### Interactive Mode
 The `Interactive mode` generates text responses based on custom user-written prompts, distinguished by the `-i` argument. The `-i` argument can be followed by an optional prompt argument if a specific prompt is desired for the chatbot.
@@ -65,6 +66,10 @@ Input files can be given in prompt or interactive modes. If the file to analyze 
 ### Verbosity (Work in progress)
 
 Verbosity will add to termbot's output stats such as Filename (If it was used for analyzing one), Cost and Tokens of the individual operation (Per prompt/answer).
+
+### Silent Mode (Work in progress)
+
+Silent Mode is a Work in Progress, and will omit the Termbot ASCII banner.
 
 # Use cases and Examples
 
