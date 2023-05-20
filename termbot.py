@@ -4,10 +4,8 @@ import openai
 import json
 import time
 from dotenv import dotenv_values
-import os
 import re
 import sys
-import fileinput
 import math
 import argparse
 
@@ -104,7 +102,7 @@ RESET = "\033[0m"
 # ARGUMENT PARSER
 
 # Create the parser
-parser = argparse.ArgumentParser(description='Welcome!! _______________')
+parser = argparse.ArgumentParser(description='Termbot\'s Help:')
 
 parser.add_argument('--interactive', '-i', nargs='?', const=True, default=None, help='Interactive mode')
 parser.add_argument('--prompt', '-p', help='Enter prompt mode')
