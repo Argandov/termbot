@@ -113,3 +113,8 @@ Or simply open interactive mode (TUI) without any context and it will work norma
 Prompt mode does the same as interactive, but it's a one-time use only. Actually, as a Proof of concept, 95% of this README.md was written by Termbot:
 
 `termbot -p "Analyze the script /file:termbot.py and generate a README.md for Github. Document what it does, its purposes and requirements for installation"`
+
+---
+To-Do:
+[X] Fix Verbose + Slim modes
+[] Make the script as efficient as possible
