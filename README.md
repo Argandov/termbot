@@ -46,6 +46,8 @@ The following command line arguments are available for `termbot.py`:
 #### Interactive Mode
 The `Interactive mode` generates text responses based on custom user-written prompts, distinguished by the `-i` argument. The `-i` argument can be followed by an optional prompt argument if a specific prompt is desired for the chatbot.
 
+IMPORTANT: This program does NOT have memory yet. It cannot sustain a conversation, or have any information about previous prompts/answers.
+
 ```bash
 termbot -i "You're a robot from 2067 and will answer my questions with a very robotic manner"
 ```
