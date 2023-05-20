@@ -117,6 +117,9 @@ Prompt mode does the same as interactive, but it's a one-time use only. Actually
 `termbot -p "Analyze the script /file:termbot.py and generate a README.md for Github. Document what it does, its purposes and requirements for installation"`
 
 ---
-To-Do:
-[X] Fix Verbose + Slim modes
-[] Make the script as efficient as possible
+To-Do/Wishlist for this program:
+- [x] Fix Verbose + Slim mode
+- [ ] Import Colors, ASCII banner as modules when necessary (Efficiency)
+- [ ] Handle more than 1 file, or even recursively.
+- [ ] Handle memory (Chaining)
+- [ ] Handle a /url: argument and scrape it
