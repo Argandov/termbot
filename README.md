@@ -9,28 +9,38 @@ CLI tool for interacting with GPT directly in the terminal, and chat with your l
 
 The name "termbot" and the ASCII banner idea just came because I was listening to [The Midnight 🎵](https://www.youtube.com/watch?v=VoD8RSnfpyo) while I was programming this and was feeling a litte bit retro at the moment.
 
-### Requirements for Installation
+# Setup
+
+### 1. Requirements for Installation
 1. A valid OpenAI API key.
-2. Python 3.x
-3. `openai`, `dotenv`, and `argparse` Python libraries.
+2. Python 3.x Installed
 
-### Installation/Setup:
+### 2. Clone the repository and install the PIP required packages (openai and python-dotenv):
 
-* For now, we can move `sudo mv termbot.py /usr/local/bin/termbot` and `chmod u+x /usr/local/bin/termbot` to launch it from anywhere.
-* Create a .env file with `OPENAI_API_KEY = "XXXXXXXXXX"` in $HOME folder, `chmod 600 $HOME/.env` and add the path to the script:
-`config = dotenv_values(".env")` (For now)
-* By default, it uses GPT-3.5-TURBO. Change `OPENAI_MODEL = "gpt-3.5-turbo"` variable for another model if desired.
+```bash
+git clone https://github.com/Argandov/termbot.git && cd termbot && pip install -r requirements.txt
+```
+### 3. Setting up the environment
+
 * Change `mood` variable for giving termbot a default context
+* Change the default `.env` I provided with `OPENAI_API_KEY = "XXXXXXXXXX"`.
+* To make this script launch from anywhere, we can take the following steps:
+  * Move `sudo mv termbot.py /usr/local/bin/termbot` and `chmod u+x /usr/local/bin/termbot` to launch it from anywhere.
+  * Move also the .env file to $HOME directory:`mv .env $HOME/.env`, `chmod 600 $HOME/.env` and add this path to the script on line 18, like this:
+`config = dotenv_values("/home/jean/.env")`
 
-### Usage
+## Usage
+
 The following command line arguments are available for `termbot.py`:
 
 ```bash
---interactive, -i    Interactive mode.
---prompt, -p        Enter prompt mode.
---verbose, -v       Add some verbosity.
---slim, -s        Don't print banner.
---examples, -e      Print some example usage.
+  -h, --help            show this help message and exit
+  --interactive , -i    Interactive mode
+  --prompt, -p          Enter prompt mode
+  --verbose, -v         Add some verbosity
+  --slim, -s            Enable slim mode
+  --examples, -e        Print some example usage
+  --gpt4                Use GPT 4 instead of 3.5 Turbo (Defaults to 3.5 Turbo)
 ```
 
 #### Interactive Mode
