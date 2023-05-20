@@ -1,9 +1,13 @@
 # termbot
-CLI tool for interacting with GPT, analyze local files, etc.
+CLI tool for interacting with GPT directly in the terminal, and chat with your local files.
 
-`termbot.py` is a Python script that allows the user to interact with OpenAI's GPT-3 natural language processing system in the terminal. It allows for both interactive mode and prompt mode, where it can analyze text data and generate text responses based on the provided prompts.
+`termbot.py` is a Python script that allows the user to interact with OpenAI's GPT-X natural language processing system in the terminal. It allows for both interactive mode and prompt mode, where it can analyze text data and generate text responses based on the provided prompts.
 
 ![termbot-prompt-mode Image](termbot-prompt-mode.png)
+
+## Feelin' retro
+
+The name "termbot" and the ASCII banner idea just came because I was listening to [The Midnight 🎵](https://www.youtube.com/watch?v=VoD8RSnfpyo) while I was programming this and was feeling a litte bit retro at the moment.
 
 ### Requirements for Installation
 1. A valid OpenAI API key.
@@ -53,27 +57,25 @@ Or simply:
 ```bash
 termbot -p "Validate /file:my-file.json as a valid JSON format"
 ```
+### Verbosity (Work in progress)
 
-Please note that there is also an optional `--verbose` flag that can provide more detailed information about the runtime process.
+Verbosity will add to termbot's output stats such as Filename (If it was used for analyzing one), Cost and Tokens of the individual operation (Per prompt/answer).
 
-### Analyzing local files by termbot
+### Slim Mode (Work in progress)
 
-Input files are given to termbot in the following format. Currently it analyzes any file format, and it has a special feature for handling also JSON files:
+Slim mode will not print the "Termbot 3000" banner, or give any color to the stdout, pure, clean plaintext output.
+
+# Analyzing local files by termbot
+
+The main and most useful feature of Termbot is it can take Input files and analyzing them by giving it a prompt. The following files can be handled by termbot:
+* JSON files
+* Any other plain text file (txt files, programs, scripts, .conf files, etc.)
 
 `termbot -p "What does this /file:aws-iam-policy.json and what does it do?`
 
 Input files can be given in prompt or interactive modes. If the file to analyze is not in the current working directory, give it the full path:
 
 `termbot -p "Analyze /file:app.py Flask app and propose a more efficient way to handle user POST data"`
-
-
-### Verbosity (Work in progress)
-
-Verbosity will add to termbot's output stats such as Filename (If it was used for analyzing one), Cost and Tokens of the individual operation (Per prompt/answer).
-
-### Silent Mode (Work in progress)
-
-Silent Mode is a Work in Progress, and will omit the Termbot ASCII banner.
 
 # Use cases and Examples
 
