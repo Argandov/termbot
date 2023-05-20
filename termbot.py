@@ -12,10 +12,13 @@ import math
 import argparse
 
 # VARIABLES
+GPT_3_5_TURBO_COST = 0.002 / 1000
+GPT_4_COST = 0.06 / 1000
 Verbose = False
 config = dotenv_values(".env")
-OPENAI_API_KEY = config["OPENAI_API_KEY"]
 OPENAI_MODEL = "gpt-3.5-turbo"
+OPENAI_API_KEY = config["OPENAI_API_KEY"]
+
 mood = "First respond correctly and appropriately to user prompts, and finish with very bad jokes about the conversation."
 usage_examples = '''
     Usage examples:
@@ -105,9 +108,11 @@ parser = argparse.ArgumentParser(description='Welcome!! _______________')
 
 parser.add_argument('--interactive', '-i', nargs='?', const=True, default=None, help='Interactive mode')
 parser.add_argument('--prompt', '-p', help='Enter prompt mode')
-parser.add_argument('--verbose', '-v', help='Add some verbosity')
-parser.add_argument('--silent', '-s', help='Don\'t print banner')
+parser.add_argument('--verbose', '-v', action='store_true', help='Add some verbosity')
+parser.add_argument('--slim', '-s', action='store_true', help='Enable slim mode')
 parser.add_argument('--examples', '-e', action='store_true', help="Print some example usage")
+parser.add_argument('--gpt4', action='store_true', help='Use GPT 4 instead of 3.5 Turbo (Defaults to 3.5 Turbo)')
+
 
 # ARGUMENT PROCESSING
 args = parser.parse_args()
@@ -120,6 +125,11 @@ def print_verbosity(filename, file_provided, tokens_used, cost, execution_time):
     else:
         print(f'{GRAY}[i] Tokens used: {tokens_used:<6}\n[i] Model: {OPENAI_MODEL}\n[i] Cost: ${cost:>8}\n[i] Execution time: {execution_time:>6}{RESET}')
 
+def calculate_prompt_cost(MODEL):
+    if MODEL == "gpt-3.5-turbo":
+        return GPT_3_5_TURBO_COST  # Price per token in dollars
+    elif MODEL == "gpt-4":
+        return GPT_4_COST
 
 def prepare_response(res,st,filename=None):
     role = res['choices'][0]['message']['role']
@@ -129,10 +139,12 @@ def prepare_response(res,st,filename=None):
     content = res['choices'][0]['message']['content']
 
     # Print out information in desired format
-    print(f"{LIGHT_BLUE}[Response]> {content}{RESET}")
+    print(f"{LIGHT_BLUE}{content}{RESET}")
+
+
 
     # Calculate and print out cost based on total tokens used
-    cost_per_token = 0.002 / 1000  # Price per token in dollars
+    cost_per_token = calculate_prompt_cost(OPENAI_MODEL)
     total_cost = total_tokens * cost_per_token
     et = time.time() # End Time
     execution_time = et - st
@@ -207,8 +219,16 @@ def _gpt_caller(Interactive_mode, mood, prompt=""):
             st = time.time()
             chatter(msg,st,mood, filename)
 
-if not args.silent:
+# ARGUMENT HANDLING
+if args.gpt4:
+    OPENAI_MODEL = "gpt-4"
+if args.slim:
+    plaintext_output = True
+else: 
     print(colored_ascii_art)
+if args.verbose:
+        print('[i] Verbosity Mode activated')
+        Verbose = True
 if not any(vars(args).values()):
     parser.print_help()
 if args.interactive:
@@ -216,10 +236,6 @@ if args.interactive:
         mood = args.interactive
     Interactive_mode = True
     print('[i] Initializing interactive mode')
-
-    if args.verbose:
-        print('[i] Verbosity Mode activated')
-        Verbose = True
 
     _gpt_caller(Interactive_mode, mood)
 elif args.examples:
