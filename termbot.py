@@ -17,16 +17,22 @@ config = dotenv_values(".env")
 OPENAI_MODEL = "gpt-3.5-turbo"
 OPENAI_API_KEY = config["OPENAI_API_KEY"]
 
-mood = "First respond correctly and appropriately to user prompts, and finish with very bad jokes about the conversation."
+mood = "First respond correctly and appropriately to user prompts, and ALWAYS finish with dark jokes about GPT and AI."
 usage_examples = '''
+
+    -s, --silent    | Silent mode: Does not display "Termbot 3000 Banner",
+    -v, --verbose   | Verbose Mode: Display, on every question, with information about its current processing (Approximate prompt cost, tokens, etc.)
+
     Usage examples:
 
     1. INTERACTIVE MODE:
 
     Interactive mode, with a template given:
+
         termbot -i "You're a robot from 2067 and will answer my questions with a very robotic manner"
 
     Interactive mode, with no template given, will just open a chat from scratch:
+    
         termbot -i
 
     2. PROMPT MODE:
@@ -116,7 +122,6 @@ parser.add_argument('--gpt4', action='store_true', help='Use GPT 4 instead of 3.
 args = parser.parse_args()
 
 # FUNCTION AREA:
-
 def print_verbosity(filename, file_provided, tokens_used, cost, execution_time):
     if filename is not None:
         print(f'{GRAY}[i] File provided: {file_provided:<25}\n[i] Tokens used: {tokens_used:<6}\n[i] Model: {OPENAI_MODEL}\n[i] Cost: ${cost:>8}\n[i] Execution time: {execution_time:>6}{RESET}')
@@ -125,7 +130,7 @@ def print_verbosity(filename, file_provided, tokens_used, cost, execution_time):
 
 def calculate_prompt_cost(MODEL):
     if MODEL == "gpt-3.5-turbo":
-        return GPT_3_5_TURBO_COST  # Price per token in dollars
+        return GPT_3_5_TURBO_COST 
     elif MODEL == "gpt-4":
         return GPT_4_COST
 
@@ -139,8 +144,6 @@ def prepare_response(res,st,filename=None):
     # Print out information in desired format
     print(f"{LIGHT_BLUE}{content}{RESET}")
 
-
-
     # Calculate and print out cost based on total tokens used
     cost_per_token = calculate_prompt_cost(OPENAI_MODEL)
     total_cost = total_tokens * cost_per_token
@@ -149,11 +152,11 @@ def prepare_response(res,st,filename=None):
     cost = f'{total_cost:.4f}'
     tokens_used = total_tokens
     if isinstance(execution_time, str):
-    # Format the execution time string
+    
         execution_time = float(execution_time)
         execution_time = f"{execution_time:.2f} seconds"
         print("debug")
-    # execution_time = f'{execution_time:.2f} seconds'
+    
     file_provided = filename
     tokens_used = total_tokens
     cost = f'{total_cost:.4f}'
@@ -237,24 +240,27 @@ if args.interactive:
 
     _gpt_caller(Interactive_mode, mood)
 elif args.examples:
-    print(usage_examples)
+    print(f"{PINK}{usage_examples}{RESET}")
 
 elif args.prompt:
+
     input_lines = []
-    # IF program starts with stdin:
+    # IF program starts with stdin (Piped content):
     if not sys.stdin.isatty():
+        print("Not TTY")
         for line in sys.stdin:
             input_lines.append(line.strip())
             mood = args.prompt
-            print(f"MOOD: {mood}")
             prompt = '\n'.join(input_lines)
             Interactive_mode = False
             _gpt_caller(Interactive_mode, mood, prompt)
 
     # IF program starts without stdin:
-    elif args.prompt:
-        #prompt = input_lines.append(args.prompt) # ESTO ES NONE - POR?
+    else:
+
+        #prompt = input_lines.append(args.prompt)
         Interactive_mode = False
+
         _gpt_caller(False, mood, args.prompt)
     # Process the input
     stdin_content = '\n'.join(input_lines)
