@@ -64,11 +64,13 @@ Verbosity will add to termbot's output stats such as Filename (If it was used fo
 
 Slim mode will not print the "Termbot 3000" banner.
 
-# Analyzing local files by termbot
+# Important notes about Analyzing local files by termbot
 
 The main and most useful feature of Termbot is it can take Input files and analyzing them by giving it a prompt. The following files can be handled by termbot:
 * JSON files
 * Any other plain text file (txt files, programs, scripts, .conf files, etc.)
+
+It can only analyze 1 file in a single prompt. The second "file:/" instruction will be ignored and passed as a string.
 
 `termbot -p "What does this /file:aws-iam-policy.json and what does it do?`
 
