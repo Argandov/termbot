@@ -32,7 +32,6 @@ The following command line arguments are available for `termbot.py`:
 --slim, -s        Don't print banner.
 --examples, -e      Print some example usage.
 ```
-*Currently "Verbose" mode is a Work In Progress.
 
 #### Interactive Mode
 The `Interactive mode` generates text responses based on custom user-written prompts, distinguished by the `-i` argument. The `-i` argument can be followed by an optional prompt argument if a specific prompt is desired for the chatbot.
@@ -57,7 +56,7 @@ Or simply:
 ```bash
 termbot -p "Validate /file:my-file.json as a valid JSON format"
 ```
-### Verbosity (Work in progress)
+### Verbosity
 
 Verbosity will add to termbot's output stats such as Filename (If it was used for analyzing one), Cost and Tokens of the individual operation (Per prompt/answer).
 
@@ -78,6 +77,14 @@ Input files can be given in prompt or interactive modes. If the file to analyze 
 `termbot -p "Analyze /file:app.py Flask app and propose a more efficient way to handle user POST data"`
 
 # Use cases and Examples
+
+Example:
+
+* Not interactive, verbosity enabled, slim mode, with GPT 4:
+![termbot verbosity, GPT 4](termbot-verbosity-gpt4.PNG)
+
+* Interactive, verbosity enabled. Default GPT 3.5 Turbo
+![Termbot Interactive + Verbosity enabled](termbot-verbosity-interactive.PNG)
 
 1. Interactive mode
 
