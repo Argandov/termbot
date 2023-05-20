@@ -32,7 +32,7 @@ usage_examples = '''
         termbot -i "You're a robot from 2067 and will answer my questions with a very robotic manner"
 
     Interactive mode, with no template given, will just open a chat from scratch:
-    
+
         termbot -i
 
     2. PROMPT MODE:
@@ -228,7 +228,6 @@ if args.slim:
 else: 
     print(colored_ascii_art)
 if args.verbose:
-        print('[i] Verbosity Mode activated')
         Verbose = True
 if not any(vars(args).values()):
     parser.print_help()
