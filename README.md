@@ -144,6 +144,9 @@ Give it a file and "analyze" it:
 - `curl ifconfig.io | termbot -p "Tell me something about this IP address"`
 - `cat my-file.json | termbot -p "Validate this file as a valid JSON format"`
 
+...Or simply execute commands directly:
+- `termbot.py -p "$(uptime) tell me something about my computer's uptime stats"`
+
 Actually, as a Proof of concept, the first termbot's README.md file I uploaded was written by Termbot:
 
 `termbot -p "Analyze the script /file:termbot.py and generate a README.md for Github. Document what it does, its purposes and requirements for installation"`
