@@ -3,7 +3,7 @@ CLI tool for interacting with GPT directly in the terminal, and chat with your l
 
 `termbot.py` is a Python script that allows the user to interact with OpenAI's GPT-X natural language processing system in the terminal. It allows for both interactive mode and prompt mode, where it can analyze text data and generate text responses based on the provided prompts.
 
-Jump to [Use cases and Examples](https://github.com/Argandov/termbot/edit/main/README.md#more-use-cases-and-examples)
+Jump to [Use cases and Examples](https://github.com/Argandov/termbot#more-use-cases-and-examples)
 
 ![termbot-prompt-mode Image](termbot-prompt-mode.png)
 
