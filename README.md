@@ -145,7 +145,8 @@ Give it a file and "analyze" it:
 - `cat my-file.json | termbot -p "Validate this file as a valid JSON format"`
 
 ...Or simply execute commands directly:
-- `termbot.py -p "$(uptime) tell me something about my computer's uptime stats"`
+- `termbot -p "Tell me something about this scan: $(nmap scanme.nmap.org -oN scanme.nmap)"` (Or whatever prompt we need) 
+- `termbot -p "$(uptime) tell me something about my computer's uptime stats"`
 
 Actually, as a Proof of concept, the first termbot's README.md file I uploaded was written by Termbot:
 
