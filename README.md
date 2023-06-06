@@ -133,7 +133,7 @@ The most basic use case:
 - `termbot -p "Why are vegetables called that way?"`
 
 Give it a file and "analyze" it: 
-- `termbot -p "Please review the SSHD configuration file /file:/etc/ssh/sshd_config and assess its overall security security. Identify any potential vulnerabilities, recommend improvements, and suggest best practices to enhance the overall security of the SSH server.`
+- `termbot -p "Please review the SSHD configuration file /file:/etc/ssh/sshd_config and assess its overall security. Identify any potential vulnerabilities, recommend improvements, and suggest best practices to enhance the overall security of the SSH server.`
 - `termbot -p "What does this /file:aws-iam-policy.json and what does it do?`
 - `termbot -p "Analyze /file:app.py Flask app and propose a more efficient way to handle user POST data"`
 
