@@ -1,9 +1,14 @@
 # termbot
 CLI tool for interacting with GPT directly in the terminal, and chat with your local files.
 
-`termbot.py` is a Python script that allows the user to interact with OpenAI's GPT-X natural language processing system in the terminal. It allows for both interactive mode and prompt mode, where it can analyze text data and generate text responses based on the provided prompts.
+`termbot.py` is a Python script that allows the user to interact with OpenAI's GPT-X natural language processing system in the terminal. It allows for the usual question/answer ChatGPT-like functionality, but with a lot more flexibility like sending local file contents, send large data from STDIN, have custom local instructions, etc.
 
-Jump to [Use cases and Examples](https://github.com/Argandov/termbot#more-use-cases-and-examples)
+# Notes about this new version:
+Termbot originally was a project kept in the dust, until I read about Daniel Miessler's [Fabric](https://github.com/danielmiessler/fabric?tab=readme-ov-file), which is basically the same idea, but it has some features I decided to add in the 2nd version of Termbot. I will here acknowledge Daniel Miessler for the inspiration for having a sepparate context folder with contexts that are selectable, easier to modify, and more permanent. Also, him showcasing Fabric was the motivation to open up my IDE and make Termbot 30% more useful than the first version.
+
+Termbot is still a Work in Progress and there are some minor issues to address, and extra functionalities I'd like to explore.
+
+Jump directly to [Use cases and Examples](https://github.com/Argandov/termbot#more-use-cases-and-examples)
 
 ![termbot-prompt-mode Image](termbot-prompt-mode.png)
 
@@ -190,7 +195,14 @@ Can work together, or standalone, so there can be a lot of combinations, like:
 - Giving a “context” to instruct GPT how to respond AND giving data to analyze through stdin or “prompt”,
 - Giving some data through stdin, and giving instructions through “prompt” when we want quick chat questions/answers,
 - Simply use the “prompt” alone to give both the instructions and data to analyze, just the same way we use ChatGPT by default (i.e. “When was Toyota founded. Please answer in spanish”
+---
 
+# PR and Colaboration
+
+I'm completely open about the idea of collaboration, since there is some work to do:
+* Code Linting and improvements about naming conventions, function callings and general efficiency/readability improvements.
+* Packaging Termbot so it's as portable as possible. Docker hasn't worked so far as intended due to Termbot's functionality to read to/from the host system (It was a deep rabbit hole I decided I won't explore for now). PIP packaging would not do it since the whole idea is to not install pip packages system-wide.
+ 
 ---
 To-Do/Wishlist for this program:
 - [x] Fix Verbose + Slim mode
