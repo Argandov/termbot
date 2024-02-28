@@ -17,14 +17,20 @@ As always with any third-party tool, specially with GPT, be careful what informa
 
 ## Limitations
 
+* It is not recommended to install PIP packages globally (System-wide) so we need to set up a new Venv to use Termbot
 * This program does NOT have memory yet. It cannot sustain a conversation, or have any information about previous prompts/answers.
 * Currently it can only analyze 1 file per prompt. (If we provide, for example `analyze /file:hello.txt, and compare it with /file:hello2.txt` the second "file:/" will be passed as a string)
+
+## Compatibility
+
+* Termbot has been tested on MacOS' default zsh, and Ubuntu/Debian default bash environments only.
 
 # Setup
 
 ### 1. Requirements for Installation
 1. A valid OpenAI API key.
 2. Python 3.x Installed
+3. Python venv
 
 ### 2. Clone the repository and install the PIP required packages (openai and python-dotenv):
 
@@ -60,9 +66,9 @@ The following command line arguments are available for `termbot.py`:
 * Interactive will open a TUI (Terminal User Interface) to continuously prompt GPT until `ctrl+c` breaks the execution. Works well with analyzing files. Do not pipe stdout into interactive mode.
 * Prompt mode will be a one-time prompt/response interaction. This way, we can pipe stdout commands into it, or analyze files on the fly.
 
-### Verbosity
+### Verbosity & Output modes
 
-Verbosity will add to termbot's output useful stats in color gray, such as:
+Verbosity (`-v`) will add to termbot's output useful stats in color gray, such as:
 * Filename (If it was used for analyzing one), 
 * Model used (GPT 3.5 Turbo or GPT 4)
 * Cost of individual operation (Per prompt/answer) - **Only an estimation**.
@@ -81,13 +87,19 @@ It seems like the nmap scan was performed on the host scanme.nmap.org and it dis
 [i] Execution time: 7.89 seconds
 ```
 
+Output to files:
+
+- It will write the raw response into a specified file without stats (verbose mode), shell color codes, or the banner.
+
 ### Slim Mode
 
 Slim mode will not print the "Termbot 3000" banner (But will still use blue color for output, and gray for verbose mode).
 
-### GPT version
+## About usage of GPT
 
-By default, termbot uses GPT-3.5 Turbo. We can add `--gpt4` for changing its model.
+- By default, termbot uses GPT-4. We can add another model if needed in the OPENAI_MODEL variable.
+- I have yet to figure out how to chunk the input data correctly. A lot of bugs still present, specially when reading files in “prompt” mode.
+- However, we can pass in large amounts of data to GPT in “context” mode and stdin.
 
 # Analyzing local files or stdout by termbot
 
@@ -115,7 +127,13 @@ How it actually looks:
 
 ![Termbot Interactive + Verbosity enabled](termbot-verbosity-interactive.PNG)
 
-1. Interactive mode
+1. Context mode
+
+- Generate, or edit customized context files in the `./context` directory, which will be passed in as instructions (”You’re a Marketing expert and will answer in French only”, etc).
+- You can list the current “contexts” by using `termbot -l`
+- Context works in addition to prompt mode, and/or stdin, so we can work with a context (How we want the GPT to respond or generate the results), a prompt (What we want it to do), a stdin (What we want it to analyze).
+
+2. Interactive mode
 
 Open an interactive session (TUI or Terminal User Interface), with a specified "template" or "persona" (See "Context" when using GPT). It will override the default "mood" context.
 
@@ -125,9 +143,16 @@ Or simply open interactive mode (TUI) without any context and it will work norma
 
 `termbot -i`
 
-2. Prompt mode (My favourite)
+3. Prompt mode
 
 Prompt mode does the same as interactive, but it's a one-time use only. 
+
+- Prompt mode’s primary function is to be the most basic chatbot. Just use `termbot -p "When was Toyota founded?"`
+- It can read files by using “`/file:my_file.txt`”  in the prompt string. This files should be Raw (It does not parse PDFs or other types of files. It reads raw contents by now).
+    - JSON Files: There’s a special feature that allows us to treat the `/file:` file as a JSON file,
+    - Otherwise, it will be passed in as raw text (Program files, texts, Python scripts, whatever)
+    - Example: `termbot -p "What does /file:app.py do?"`
+- Prompt mode will be “appended” to the desired “Mood”. Mood is the “context” given (See: context)
 
 The most basic use case: 
 - `termbot -p "Why are vegetables called that way?"`
@@ -152,9 +177,24 @@ Actually, as a Proof of concept, the first termbot's README.md file I uploaded w
 
 `termbot -p "Analyze the script /file:termbot.py and generate a README.md for Github. Document what it does, its purposes and requirements for installation"`
 
+# Summary of modes
+
+Termbot is extremely customizable, and the modes:
+
+- Prompt,
+- Context,
+- Stdin,
+
+Can work together, or standalone, so there can be a lot of combinations, like:
+
+- Giving a “context” to instruct GPT how to respond AND giving data to analyze through stdin or “prompt”,
+- Giving some data through stdin, and giving instructions through “prompt” when we want quick chat questions/answers,
+- Simply use the “prompt” alone to give both the instructions and data to analyze, just the same way we use ChatGPT by default (i.e. “When was Toyota founded. Please answer in spanish”
+
 ---
 To-Do/Wishlist for this program:
 - [x] Fix Verbose + Slim mode
+- [ ] Generate an "Examples" Section. There's a lot to talk about use cases
 - [ ] Import Colors, ASCII banner as modules when necessary (Efficiency)
 - [ ] Handle more than 1 file, or even recursively.
 - [ ] Handle memory (Chaining)
