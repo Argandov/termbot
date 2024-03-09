@@ -19,9 +19,9 @@ from dotenv import dotenv_values
 from openai import OpenAI
 
 # VARIABLES
-addons_path = "context" # Directory Path of contexts folder
+addons_path = "context"
 Verbose = False
-config = dotenv_values("/Abrolute/path/.env") # Change this
+config = dotenv_values("/Absolute/path/.env")
 OPENAI_MODEL = "gpt-4"
 chat_history = []
 
