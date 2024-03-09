@@ -31,7 +31,7 @@ from openai import OpenAI
 # VARIABLES
 addons_path = "context"
 Verbose = False
-config = dotenv_values("/Users/jag/Devel/Tools/termbot/.env")
+config = dotenv_values("/Abrolute/path/.env")
 OPENAI_MODEL = "gpt-4"
 chat_history = []
 
