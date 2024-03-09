@@ -65,7 +65,7 @@ The following command line arguments are available for `termbot.py`:
 Verbosity will add to termbot's output useful stats in color gray, such as:
 * Filename (If it was used for analyzing one), 
 * Model used (GPT 3.5 Turbo or GPT 4)
-* Cost of individual operation (Per prompt/answer) - **Only an estimation**.
+* Cost of individual operation (Per prompt/answer) - **Only a rough estimation; it doesn't take into account input/output cost breakdown**.
 * Tokens used by the individual operation (Per prompt/answer).
 * Execution time per prompt/answer
 
