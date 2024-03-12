@@ -53,7 +53,7 @@ Termbot is optimized for compatibility with MacOS' default zsh, and Ubuntu/Debia
 
 ### Context Mode 
 
-In this mode, you can create or edit custom context files in the ./context directory. This will provide instructions on how the Termbot responds to the given prompts, the so-called personality or 'mood'. You can list the current contexts by using the command `termbot -l`.
+In this mode, you can create or edit custom context files in the ./context directory. This will provide instructions on how the Termbot responds to the given prompts, the so-called personality or 'mood'. You can list the current contexts by using the command `termbot -l`. This idea is 100% inspired by Daniel Miessler's [Fabric](https://github.com/danielmiessler/fabric)'s usage of "patterns".
 
 ### Interactive Mode
 
