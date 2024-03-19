@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 
-    # Import style functions & general termbot data
 from modules.termbot_banner import \
         colored_ascii_art, \
         GRAY, LIGHT_BLUE, PINK, RESET
 from modules.termbot_data import termbot_usage_examples
 
-import tiktoken
 import os
 import json
 import time
@@ -15,18 +13,19 @@ import sys
 import math
 import argparse
 import numpy as np
-from dotenv import dotenv_values
+from dotenv import dotenv_values, load_dotenv
 from openai import OpenAI
 
 # VARIABLES
 addons_path = "context"
 Verbose = False
-config = dotenv_values("/Absolute/path/.env")
+load_dotenv()
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+
 OPENAI_MODEL = "gpt-4"
 chat_history = []
 
 # OpenAI API Setup:
-OPENAI_API_KEY = config["OPENAI_API_KEY"]
 OpenAI_Client = OpenAI(
         api_key=OPENAI_API_KEY,
         )
@@ -144,7 +143,7 @@ def prepare_response(openai_response,start_time,filename=None):
     
     cost = f'{total_cost:.4f}'
     execution_time = f'{execution_time:.2f} seconds'
-    if Verbose == True:
+    if Verbose:
         print_verbosity(filename, total_tokens_used, cost, execution_time)
 
 def chatter(msg, start_time, mood, filename=None):
@@ -180,10 +179,15 @@ def chatter(msg, start_time, mood, filename=None):
     chat_history.append(mood)
     chat_history.append(msg)
 
-    openai_response = OpenAI_Client.chat.completions.create(
-        model = OPENAI_MODEL,
-        messages = messages
-    )
+    try:
+        openai_response = OpenAI_Client.chat.completions.create(
+            model = OPENAI_MODEL,
+            messages = messages
+        )
+
+    except Exception as e:
+        print("[X] Error: :\n", e)
+        sys.exit(1)
 
     return prepare_response(openai_response,start_time,filename)
 
