@@ -86,8 +86,10 @@ Contributions to Termbot are welcomed, particularly in areas such as code lintin
 
 ## Roadmap/Wishlist
 
+- [ ] Add Anthropic's Claude 3 LLM Model as an alternative
 - [x] Fix Verbose + Slim mode
-- [ ] Add an "Examples" Section
+- [ ] Improve Performance: Functions are too bloaty and slow
+- [X] Add an "Examples" Section
 - [X] Improve Efficiency: Import Colors, ASCII banner as modules when necessary 
 - [X] Add capability to handle more than 1 file, or even recursively.
 - [ ] Implement in-memory sessions to continue conversation threads
