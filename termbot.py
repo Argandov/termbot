@@ -46,22 +46,25 @@ parser.add_argument('--gpt4', action='store_true', help='Use GPT 4 instead of 3.
 args = parser.parse_args()
 
     # Verbosity for Printing General Stats about execution
-def print_verbosity(filename, tokens_used, cost, execution_time):
-    if filename is not None:
-        print(f'\
-                {GRAY}[i] File provided: {filename:<25}\n\
-                [i] Tokens used: {tokens_used:<6}\n\
-                [i] Model: {OPENAI_MODEL}\n\
-                [i] Cost: ${cost:>8}\n\
-                [i] Execution time: {execution_time:>6}{RESET}'
-              )
+def print_verbosity(filename, tokens_used, input_tokens, output_tokens, cost, execution_time):
+    if len(filename) > 1:
+        print((
+            f"{GRAY}[i] Tokens used: {tokens_used:<6}\n" 
+            f"  | Prompt: {input_tokens:<6}\n"
+            f"  | Completion: {output_tokens:<6}\n"
+            f"[i] Model: {OPENAI_MODEL}\n"
+            f"[i] Cost: ${cost:>8}\n"
+            f"[i] Execution time: {execution_time:>6}{RESET}"
+        ))
     else:
-        print(f'\
-                {GRAY}[i] Tokens used: {tokens_used:<6}\n\
-                [i] Model: {OPENAI_MODEL}\n\
-                [i] Cost: ${cost:>8}\n\
-                [i] Execution time: {execution_time:>6}{RESET}'
-              )
+        print((
+            f"{GRAY}[i] Tokens used: {tokens_used:<6}\n" 
+            f"  | Prompt: {input_tokens:<6}\n"
+            f"  | Completion: {output_tokens:<6}\n"
+            f"[i] Model: {OPENAI_MODEL}\n"
+            f"[i] Cost: ${cost:>8}\n"
+            f"[i] Execution time: {execution_time:>6}{RESET}"
+        ))
 
 def calculate_prompt_cost(MODEL):
     # Making a rough estimation of the token cost
@@ -74,7 +77,7 @@ def calculate_prompt_cost(MODEL):
     elif MODEL == "gpt-4":
         return GPT_4_COST
 
-def _list_available_contexts(addons_path): # WORK IN PROGRESS!!
+def _list_available_contexts(addons_path) -> list: # WORK IN PROGRESS!!
     # List available Termbot's Contexts 
 
         # This joins the absolute path of the contexts folder instead of trying to load them from the user's PWD context:
@@ -85,6 +88,7 @@ def _list_available_contexts(addons_path): # WORK IN PROGRESS!!
     file_paths = []
     for filename in os.listdir(addons_path):
         files.append(filename)
+    return files
 
     # Extract the selected context at execution
 def _get_context(selected_context, addons_path): 
@@ -108,7 +112,7 @@ def _get_context(selected_context, addons_path):
         print(f"[!] Context \"{selected_context}\" does not exist")
         sys.exit(1)
 
-def prepare_response(openai_response,start_time,filename=None):
+def prepare_response(openai_response,start_time,filename=None, Verbose=False):
     # This function receives the API's response and extracts desired data
 
     res = openai_response
@@ -141,11 +145,10 @@ def prepare_response(openai_response,start_time,filename=None):
     cost = f'{total_cost:.4f}'
     execution_time = f'{execution_time:.2f} seconds'
     if Verbose:
-        print_verbosity(filename, total_tokens_used, cost, execution_time)
+        print_verbosity(filename, total_tokens_used, prompt_tokens, completion_tokens, cost, execution_time)
 
-def chatter(msg, start_time, mood, filename=None):
+def chatter(msg, start_time, mood, filename=None, Verbose=False):
     # Prepare data and send to OpenAI API
-
     FILE_CONTENTS = ""
     # If /file: was provided in the prompt
     if filename is not None:
@@ -217,7 +220,7 @@ def chatter(msg, start_time, mood, filename=None):
         print("[X] Error: :\n", e)
         sys.exit(1)
 
-    return prepare_response(openai_response,start_time,filename)
+    return prepare_response(openai_response,start_time,filename,Verbose)
 
 def input_linter(prompt):
     # Search for user input data containing "/file:" 
@@ -225,6 +228,9 @@ def input_linter(prompt):
     pattern = r"/file:([^ ]+)"
 
     matches = re.findall(pattern, prompt)
+        # If no /file: in prompt, return original prompt
+    if not matches:
+        clean_message = prompt
 
         # Process each match
     for filename in matches:
@@ -240,7 +246,7 @@ def input_linter(prompt):
         
     return clean_message, matches
 
-def filter_interactive_mode(Interactive_mode, mood, prompt=""):
+def filter_interactive_mode(Interactive_mode, mood, prompt="", Verbose=False):
     # initialize interactive mode if chosen 
 
         # Extract filename if user input contains "/file:"
@@ -248,7 +254,7 @@ def filter_interactive_mode(Interactive_mode, mood, prompt=""):
 
     if Interactive_mode == False:
         start_time = time.time()
-        chatter(msg,start_time,mood, filename)
+        chatter(msg,start_time,mood, filename, Verbose)
 
     # Make it continuous for Interactive mode
     if Interactive_mode == True:
@@ -257,7 +263,7 @@ def filter_interactive_mode(Interactive_mode, mood, prompt=""):
             user_input = input(f"{PINK}[Prompt]> {RESET}")
             msg, filename = input_linter(user_input)
             start_time = time.time()
-            chatter(msg,start_time,mood, filename)
+            chatter(msg,start_time,mood, filename, Verbose)
 
 # PREPARE ARGUMENTS
 
@@ -283,23 +289,25 @@ def gather_input_from_stdin(input_lines, mood, prompt, verbose):
             input_lines.append(line.strip())
         mood = mood + "\n" + prompt
         prompt = '\n'.join(input_lines)
-        filter_interactive_mode(False, mood, prompt)
+        filter_interactive_mode(False, mood, prompt, verbose)
 
         # Process the input
         stdin_content = '\n'.join(input_lines)
 
     else:
         Interactive_mode = False
-        filter_interactive_mode(False, mood, prompt)
+        filter_interactive_mode(False, mood, prompt, verbose)
     return prompt
 
 def handle_args(args):
+    Verbose = True if args.verbose else False
     if args.list:
-        _list_available_contexts(addons_path)
+        context_list = _list_available_contexts(addons_path)
+        for context in context_list:
+            print(context)
 
     OPENAI_MODEL = "gpt-4" if args.gpt4 else "gpt-4"
     plaintext_output = True if args.slim else print(colored_ascii_art)
-    Verbose = True if args.verbose else False
 
     if not any(vars(args).values()):
         parser.print_help()
