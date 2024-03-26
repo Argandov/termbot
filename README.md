@@ -61,7 +61,7 @@ This mode allows for continuous interaction until terminated by a `ctrl+c` comma
 
 ### Prompt Mode
 
-This mode facilitates a one-time interaction. It is also the mode in which you can feed local files into Termbot to parse, analyse and respond using the `/file:path/to/my/file.txt` command. This is extremely handy to analyse file contents, code, etc.
+This mode facilitates a one-time interaction. It is also the mode in which you can feed local files into Termbot to parse, analyse and respond using the `/file:path/to/my/file.txt` command. This is extremely handy to analyse file contents, code, etc. It can handle multiple files in the same prompt.
 
 ## Custom Modes and Additional Features
 
@@ -77,6 +77,7 @@ Termbot can also handle input in form of local files or piped stdout, making it 
 
   # Piping stdout into termbot
   <command> | termbot -p "<do something with the command's output>"
+
   ```
 
 ## Collaboration
@@ -88,6 +89,6 @@ Contributions to Termbot are welcomed, particularly in areas such as code lintin
 - [x] Fix Verbose + Slim mode
 - [ ] Add an "Examples" Section
 - [X] Improve Efficiency: Import Colors, ASCII banner as modules when necessary 
-- [ ] Add capability to handle more than 1 file, or even recursively.
+- [X] Add capability to handle more than 1 file, or even recursively.
 - [ ] Implement in-memory sessions to continue conversation threads
 - [ ] Implement /url: argument to scrape web pages for data

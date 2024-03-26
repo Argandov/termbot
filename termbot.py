@@ -16,7 +16,6 @@ import numpy as np
 from dotenv import dotenv_values, load_dotenv
 from openai import OpenAI
 
-# VARIABLES
 addons_path = "context"
 Verbose = False
 load_dotenv()
@@ -86,8 +85,6 @@ def _list_available_contexts(addons_path): # WORK IN PROGRESS!!
     file_paths = []
     for filename in os.listdir(addons_path):
         files.append(filename)
-    for _files in files:
-        print(_files)
 
     # Extract the selected context at execution
 def _get_context(selected_context, addons_path): 
@@ -149,18 +146,49 @@ def prepare_response(openai_response,start_time,filename=None):
 def chatter(msg, start_time, mood, filename=None):
     # Prepare data and send to OpenAI API
 
+    FILE_CONTENTS = ""
     # If /file: was provided in the prompt
     if filename is not None:
-        with open(filename) as _file:
+
+        # If only one file was provided
+        if len(filename) == 1:
+            filename = filename[0]
             if filename.endswith(".json"):
-                JSON_DATA = json.load(_file)
-                FILE_CONTENTS = json.dumps(JSON_DATA)
+                with open(filename) as f:
+                    FILE_CONTENTS += "[INFO] BEGINNING of File: " + filename + " ---------- \n"
+                    FILE_CONTENTS +=  f.read()
+                    
+                    FILE_CONTENTS += "[INFO] END of File: " + filename + " ---------- \n"
+
             else:
-                FILE_CONTENTS = _file.read()
+                with open(filename) as f:
+                    FILE_CONTENTS += "[INFO] BEGINNING of File: " + filename + " ---------- \n"
+                    FILE_CONTENTS += f.read()
+                    FILE_CONTENTS += "[INFO] END of File: " + filename + " ---------- \n"
+
+        elif len(filename) > 1:
+
+            # If multiple files were provided at prompt
+            for f in filename:
+                print(f"Opening {f}...")
+                with open(f) as _file:
+                    if f.endswith(".json"):
+                        # Load json file
+                        JSON_DATA = json.load(_file)
+                        # Put the raw string of the json file into the FILE_CONTENTS variable
+                        FILE_CONTENTS += "[INFO] BEGINNING of File: " + f + " ---------- \n"
+                        FILE_CONTENTS += json.dumps(JSON_DATA)
+                        FILE_CONTENTS += "[INFO] END of File: " + f + " ---------- \n"
+                    else:
+                        # Load _file and append it to the FILE_CONTENTS variable:
+                        FC = _file.read()
+                        FILE_CONTENTS += "[INFO] BEGINNING of File: " + f + " ---------- \n"
+                        FILE_CONTENTS += FC
+                        FILE_CONTENTS += "[INFO] END of File: " + f + " ---------- \n"
             
         # Create new message string with file contents appended
             # This Message is for OpenAI API
-        FILE_CONTENTS = f"\n\nHere is what {filename} contains:" + "\n" + FILE_CONTENTS
+        FILE_CONTENTS = f"\n\nFile Contents:" + "\n" + FILE_CONTENTS
         
         msg = msg + FILE_CONTENTS
 
@@ -194,14 +222,23 @@ def chatter(msg, start_time, mood, filename=None):
 def input_linter(prompt):
     # Search for user input data containing "/file:" 
     filename_match = re.search(r'/file:(\S+)', prompt)
-    if filename_match:
-        filename = filename_match.group(1)
+    pattern = r"/file:([^ ]+)"
+
+    matches = re.findall(pattern, prompt)
+
+        # Process each match
+    for filename in matches:
+        # Clean up the filename (similar to what you did before but adapted for this context)
         filename_clean = re.sub(r'[^\w.]+$', '', filename)
+
+        # Replace the original "hello:/" prefixed string with the cleaned filename in the prompt
+        # Note: This replaces all instances of the exact match. If you have identical filenames, they'll all be replaced.
         clean_message = prompt.replace('/file:' + filename, filename_clean)
-    else:
+
+    if not matches:
         filename_clean = None
-        clean_message = prompt
-    return clean_message, filename_clean
+        
+    return clean_message, matches
 
 def filter_interactive_mode(Interactive_mode, mood, prompt=""):
     # initialize interactive mode if chosen 
