@@ -279,7 +279,7 @@ def process_with_context_and_prompt(context, prompt, addons_path, verbose):
 
     # Process the input
     stdin_content = '\n'.join(input_lines)
-    sys.exit(1)
+    sys.exit(0)
 
 def gather_input_from_stdin(input_lines, mood, prompt, verbose):
     if not sys.stdin.isatty():
