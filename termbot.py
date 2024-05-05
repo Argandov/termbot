@@ -15,67 +15,79 @@ import argparse
 import numpy as np
 from dotenv import dotenv_values, load_dotenv
 from openai import OpenAI
+from groq import Groq
 
+# VARIABLE ZONE: CHANGE THIS ACCORDING TO YOUR NEEDS:
+groq_model = "mixtral-8x7b-32768"
 addons_path = "context"
-Verbose = False
-load_dotenv()
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
-OPENAI_MODEL = "gpt-4"
-chat_history = []
-
-# OpenAI API Setup:
-OpenAI_Client = OpenAI(
-        api_key=OPENAI_API_KEY,
-        )
+# ----------------------------------
+Verbose = False     # Default Value
 
 # ARGUMENT PARSER
     # Create the parser
 parser = argparse.ArgumentParser(description='Termbot\'s Help:')
     # Parse arguments
 parser.add_argument('--interactive', '-i', nargs='?', const=True, default=None, help='Interactive mode')
+parser.add_argument('--groq', nargs='?', const=True, default=None, help='Use Groq API instead of OpenAI (defaults to GPT-4)')
+parser.add_argument('--slim', '-s', nargs='?', const=True, default=None, help='Enable slim mode')
 parser.add_argument('--prompt', '-p', help='Enter prompt mode')
 parser.add_argument('--context', '-c', help='Use a given custom Context file. DO NOT USE \"PROMPT MODE\"')
-parser.add_argument('--outfile', help='Send the raw output from GPT to a new specified file')
+parser.add_argument('--outfile', '-o', help='Send the raw output from GPT to a new specified file')
 parser.add_argument('--verbose', '-v', action='store_true', help='Add some verbosity')
 parser.add_argument('--list', '-l', action='store_true', help='List available contexts')
-parser.add_argument('--slim', '-s', action='store_true', help='Enable slim mode')
 parser.add_argument('--examples', '-e', action='store_true', help="Print some example usage")
-parser.add_argument('--gpt4', action='store_true', help='Use GPT 4 instead of 3.5 Turbo (Defaults to 3.5 Turbo)')
     # Argument Parsing
 args = parser.parse_args()
 
-    # Verbosity for Printing General Stats about execution
+load_dotenv()
+if not args.groq:
+    OPENAI_MODEL = "gpt-4"
+    OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+    # OpenAI API Setup:
+    llm_client = OpenAI(
+            api_key=OPENAI_API_KEY,
+            )
+else:
+    GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+    # OpenAI API Setup:
+    llm_client = Groq(
+            api_key=GROQ_API_KEY,
+        )
+
+chat_history = []
+
+
 def print_verbosity(filename, tokens_used, input_tokens, output_tokens, cost, execution_time):
-    if len(filename) > 1:
-        print((
-            f"{GRAY}[i] Tokens used: {tokens_used:<6}\n" 
-            f"  | Prompt: {input_tokens:<6}\n"
-            f"  | Completion: {output_tokens:<6}\n"
-            f"[i] Model: {OPENAI_MODEL}\n"
-            f"[i] Cost: ${cost:>8}\n"
-            f"[i] Execution time: {execution_time:>6}{RESET}"
-        ))
-    else:
-        print((
-            f"{GRAY}[i] Tokens used: {tokens_used:<6}\n" 
-            f"  | Prompt: {input_tokens:<6}\n"
-            f"  | Completion: {output_tokens:<6}\n"
-            f"[i] Model: {OPENAI_MODEL}\n"
-            f"[i] Cost: ${cost:>8}\n"
-            f"[i] Execution time: {execution_time:>6}{RESET}"
-        ))
+    try:
+        if len(filename) > 1:
+            print((
+                f"{GRAY}[i] Tokens used: {tokens_used:<6}\n" 
+                f"  | Prompt: {input_tokens:<6}\n"
+                f"  | Completion: {output_tokens:<6}\n"
+                f"[i] Model: {OPENAI_MODEL}\n"
+                f"[i] Cost: ${cost:>8}\n"
+                f"[i] Execution time: {execution_time:>6}{RESET}"
+            ))
+        else:
+            print((
+                f"{GRAY}[i] Tokens used: {tokens_used:<6}\n" 
+                f"  | Prompt: {input_tokens:<6}\n"
+                f"  | Completion: {output_tokens:<6}\n"
+                f"[i] Model: {OPENAI_MODEL}\n"
+                f"[i] Cost: ${cost:>8}\n"
+                f"[i] Execution time: {execution_time:>6}{RESET}"
+            ))
+    except:
+        pass
+
 
 def calculate_prompt_cost(MODEL):
     # Making a rough estimation of the token cost
     # Note: This doesn't take into account the diff. between input/output cost differences
 
-    GPT_3_5_TURBO_COST = 0.002 / 1000
     GPT_4_COST = 0.06 / 1000
-    if MODEL == "gpt-3.5-turbo":
-        return GPT_3_5_TURBO_COST
-    elif MODEL == "gpt-4":
-        return GPT_4_COST
+    return GPT_4_COST
 
 def _list_available_contexts(addons_path) -> list: # WORK IN PROGRESS!!
     # List available Termbot's Contexts 
@@ -132,8 +144,11 @@ def prepare_response(openai_response,start_time,filename=None, Verbose=False):
             outFile.write(content)
 
     # Calculate and print out cost based on total tokens used
-    cost_per_token = calculate_prompt_cost(OPENAI_MODEL)
-    total_cost = total_tokens_used * cost_per_token
+    if not args.groq:
+        cost_per_token = calculate_prompt_cost(OPENAI_MODEL)
+        total_cost = total_tokens_used * cost_per_token
+    else:
+        total_cost = 0
     end_time = time.time() 
     execution_time = end_time - start_time
     cost = f'{total_cost:.4f}'
@@ -210,9 +225,15 @@ def chatter(msg, start_time, mood, filename=None, Verbose=False):
     chat_history.append(mood)
     chat_history.append(msg)
 
+    # This logic sucks; haven't had time to fix
+    if args.groq:
+        model = groq_model
+    else:
+        model = OPENAI_MODEL
+
     try:
-        openai_response = OpenAI_Client.chat.completions.create(
-            model = OPENAI_MODEL,
+        openai_response = llm_client.chat.completions.create(
+            model = model,
             messages = messages
         )
 
@@ -306,7 +327,6 @@ def handle_args(args):
         for context in context_list:
             print(context)
 
-    OPENAI_MODEL = "gpt-4" if args.gpt4 else "gpt-4"
     plaintext_output = True if args.slim else print(colored_ascii_art)
 
     if not any(vars(args).values()):
