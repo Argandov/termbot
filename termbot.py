@@ -42,7 +42,7 @@ args = parser.parse_args()
 
 load_dotenv()
 if not args.groq:
-    OPENAI_MODEL = "gpt-4"
+    OPENAI_MODEL = "gpt-4o"
     OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
     # OpenAI API Setup:
     llm_client = OpenAI(
