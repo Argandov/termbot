@@ -1,6 +1,6 @@
 # Termbot
 
-Termbot is a command-line interface tool for conveniently interacting with OpenAI's GPT-X natural language processing system, directly from your terminal. It allows the user to use standard ChatGPT-like question/answer functionality, with added flexibility such as interacting with local file contents, sending large data from STDIN, using custom local instructions, and more.
+Termbot is a command-line interface tool for conveniently interacting with OpenAI's GPT-X or Groq's natural language processing system, directly from your terminal. It allows the user to use standard ChatGPT-like question/answer functionality, with added flexibility such as interacting with local file contents, sending large data from STDIN, using custom local instructions, and more.
 
 ![Termbot Image](images/termbot-prompt-mode.png)
 
@@ -17,14 +17,14 @@ Or use Poetry
 
 ### Requirements
 
-- A valid OpenAI API key.
+- A valid OpenAI or Groq API key.
 - Python 3.x Installed
 - Python venv
 
 ### Environment Settings
 
-- Replace the value of the `OPENAI_API_KEY` variable in the provided `.env` file.
-- Use the commands on line 24 to assign a home directory to your script interactively.
+- Replace the value API key variables in the provided `.env.example` file and `mv .env.example .env`.
+- Change variables from the script to fit your needs (Groq Model, GPT Model, context folder).
 
 ## Usage
 
@@ -44,7 +44,7 @@ options:
   --list, -l            List available contexts
   --slim, -s            Enable slim mode
   --examples, -e        Print example usage
-  --gpt4                Use GPT 4 instead of 3.5 Turbo (Defaults to 3.5 Turbo)
+  --groq                Use Groq API instead of OpenAI (defaults to GPT-4)
 ```
 
 Termbot is optimized for compatibility with MacOS' default zsh, and Ubuntu/Debian default bash environments.
@@ -86,7 +86,8 @@ Contributions to Termbot are welcomed, particularly in areas such as code lintin
 
 ## Roadmap/Wishlist
 
-- [ ] Add Anthropic's Claude 3 LLM Model as an alternative
+- [CANCELLED] Add Anthropic's Claude 3 LLM Model as an alternative
+- [x] Add Groq AI LLM API capability
 - [x] Fix Verbose + Slim mode
 - [ ] Improve Performance: Functions are too bloaty and slow
 - [X] Add an "Examples" Section
