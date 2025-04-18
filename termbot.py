@@ -251,18 +251,19 @@ def input_linter(prompt):
         # If no /file: in prompt, return original prompt
     if not matches:
         clean_message = prompt
+        filename_clean = None
+        matches = None
 
         # Process each match
-    for filename in matches:
-        # Clean up the filename (similar to what you did before but adapted for this context)
-        filename_clean = re.sub(r'[^\w.]+$', '', filename)
+    if matches:
+        for filename in matches:
+            # Clean up the filename (similar to what you did before but adapted for this context)
+            filename_clean = re.sub(r'[^\w.]+$', '', filename)
 
-        # Replace the original "hello:/" prefixed string with the cleaned filename in the prompt
-        # Note: This replaces all instances of the exact match. If you have identical filenames, they'll all be replaced.
-        clean_message = prompt.replace('/file:' + filename, filename_clean)
+            # Replace the original "hello:/" prefixed string with the cleaned filename in the prompt
+            # Note: This replaces all instances of the exact match. If you have identical filenames, they'll all be replaced.
+            clean_message = prompt.replace('/file:' + filename, filename_clean)
 
-    if not matches:
-        filename_clean = None
         
     return clean_message, matches
 
@@ -293,7 +294,8 @@ def process_with_context_and_prompt(context, prompt, addons_path, verbose):
         context = _get_context(selected_context, addons_path)
         mood = context
     else:
-        mood = prompt
+        context = _get_context("default", addons_path)
+        mood = context
     input_lines = []
     prompt = gather_input_from_stdin(input_lines, mood, prompt, verbose)
 
@@ -307,8 +309,7 @@ def gather_input_from_stdin(input_lines, mood, prompt, verbose):
             print("[i] Reading from Stdin...")
         for line in sys.stdin:
             input_lines.append(line.strip())
-        mood = mood + "\n" + prompt
-        prompt = '\n'.join(input_lines)
+        prompt = prompt + '\n' + '\n'.join(input_lines)
         filter_interactive_mode(False, mood, prompt, verbose)
 
         # Process the input

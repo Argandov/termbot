@@ -16,6 +16,10 @@ pip install -r requirements.txt
 ```
 Or use Poetry
 
+Modify the file `context/default` as needed. This is the default "system context" given to OpenAI to set the tone of the conversation.
+
+Explore the `context/` folder and modify or add additional contexts depending on your needs or what you want to do with Termbot. 
+
 ## Important: Poetry's Python 3.13 Compatibility Notice
 
 This project does not support Python 3.13 yet due to missing prebuilt wheels for pydantic-core, causing Poetry install failures.
@@ -24,14 +28,14 @@ Solution: Use Python 3.12
 
 Before installing dependencies, set Poetry to use Python 3.12:
 
-```
+```bash
 poetry env use python3.12
 poetry install
-``` 
+```
 
 Verify with:
 
-```
+```bash
 poetry run python --version
 ```
 
@@ -98,7 +102,7 @@ Termbot can also handle input in form of local files or piped stdout, making it 
   termbot -p "Explain what /file:app.py does and analyze any potential errors"
 
   # Piping stdout into termbot
-  <command> | termbot -p "<do something with the command's output>"
+  cat README.md | termbot -p "What is this file about?"
 
   ```
 
