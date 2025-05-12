@@ -28,7 +28,7 @@ Or simply run the helper script `setup.sh`. Examine the setup script first and a
 3. **Run termbot setup**
 
 ```bash
-termbot -s
+termbot --setup
 ```
 
 It will perform the following operations:
@@ -68,7 +68,7 @@ Flags:
 
   -p, --prompt string     LLM prompt (required)
 
-  -s, --setup-checklist   Make termbot set itself up in your system
+      --setup-checklist   Make termbot set itself up in your system
 
   -m, --slim-mode         Enable slim mode (No ANSI colors)
 
