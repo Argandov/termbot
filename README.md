@@ -1,123 +1,141 @@
 # Termbot
 
-Termbot is a command-line interface tool for conveniently interacting with OpenAI's GPT-X or Groq's natural language processing system, directly from your terminal. It allows the user to use standard ChatGPT-like question/answer functionality, with added flexibility such as interacting with local file contents, sending large data from STDIN, using custom local instructions, and more.
+Termbot is a command-line tool for interacting with OpenAI’s GPT directly from your terminal.
 
-![Termbot Image](images/termbot-prompt-mode.png)
+---
 
+ℹ️ **Version Note**
 
-## Initial Setup
+The original Termbot (Python) was fully rewritten in **Go (Golang)** as of version **v2.0.0**.
+The previous **Python version** is still available here - [https://github.com/Argandov/termbot/tree/v1.0.0](https://github.com/Argandov/termbot/tree/v1.0.0) under the `v1.0.0` tag.
 
-Clone the repository and install the required PIP packages:
+---
+
+## Setup
+
+1. **Clone the repository:**
 
 ```bash
 git clone https://github.com/Argandov/termbot.git
-cd termbot 
-pip install -r requirements.txt
 ```
-Or use Poetry
 
-Modify the file `context/default` as needed. This is the default "system context" given to OpenAI to set the tone of the conversation.
+2. **Finish setup:**
 
-Explore the `context/` folder and modify or add additional contexts depending on your needs or what you want to do with Termbot. 
+- Run `go build .` and move the termbot binary to your bin path 
 
-## Important: Poetry's Python 3.13 Compatibility Notice
+Or simply run the helper script `setup.sh`. Examine the setup script first and adjust to your specific system setup if necessary.
 
-This project does not support Python 3.13 yet due to missing prebuilt wheels for pydantic-core, causing Poetry install failures.
-
-Solution: Use Python 3.12
-
-Before installing dependencies, set Poetry to use Python 3.12:
+3. **Run termbot setup**
 
 ```bash
-poetry env use python3.12
-poetry install
+termbot -s
 ```
 
-Verify with:
+It will perform the following operations:
 
-```bash
-poetry run python --version
-```
+- Create a `$HOME/.env` file,
+- Will ask for an OpenAI API Key, and upon receiving it, it will add it to your previously created `.env` file,
+- Create termbot config folder inside `$HOME/.config/termbot`,
+- Add a default System prompt ("Context") file in `$HOME/.config/termbot/context/default`
 
-Until full support for Python 3.13 is available, stick to Python 3.12.
+4. **Adjust as needed**
 
-### Requirements
+Modify the file `$HOME/.config/termbot/context/default` as needed. This is the default "system context" given to OpenAI to set the tone of the conversation. DO NOT change the name of this default file. It is the base system prompt used, unless specified otherwise (See "*context*" below in this README). 
 
-- A valid OpenAI or Groq API key.
-- Python 3.x Installed
-- Python venv
-
-### Environment Settings
-
-- Replace the value API key variables in the provided `.env.example` file and `mv .env.example .env`.
-- Change variables from the script to fit your needs (Groq Model, GPT Model, context folder).
-
+Add additional contexts depending on your needs or what you want to do with Termbot. 
 ## Usage
 
 This versatile tool can be used in Interactive, Prompt, or Context modes with numerous command-line options available. 
 
 ```
-options:
-  -h, --help            show this help message and exit
-  --interactive [INTERACTIVE], -i [INTERACTIVE]
-                        Interactive mode
-  --prompt PROMPT, -p PROMPT
-                        One-time prompt mode
-  --context CONTEXT, -c CONTEXT
-                        Use a given custom Context file
-  --outfile OUTFILE     Send the raw output from GPT to a new specified file
-  --verbose, -v         Verbose mode
-  --list, -l            List available contexts
-  --slim, -s            Enable slim mode
-  --examples, -e        Print example usage
-  --groq                Use Groq API instead of OpenAI (defaults to GPT-4)
+Usage:
+
+  termbot [flags]
+
+Flags:
+
+  -c, --context string    Choose a context to use (default "default")
+
+  -d, --dry-run           Print the prompts without actually running them
+
+  -e, --examples          Print examples and additional usage
+
+  -f, --file string       File input (absolute or relative)
+
+  -h, --help              help for termbot
+
+  -l, --list-contexts     List available contexts
+
+  -p, --prompt string     LLM prompt (required)
+
+  -s, --setup-checklist   Make termbot set itself up in your system
+
+  -m, --slim-mode         Enable slim mode (No ANSI colors)
+
+  -v, --verbose           Enable verbose mode
 ```
 
-Termbot is optimized for compatibility with MacOS' default zsh, and Ubuntu/Debian default bash environments.
 
-## Modes of Operation
+If ran from a non-TTY, need to pipe termbot's output to a file, or ANSI colors is not supported, use always with `--slim-mode` or `-m`.
 
-### Context Mode 
-
-In this mode, you can create or edit custom context files in the ./context directory. This will provide instructions on how the Termbot responds to the given prompts, the so-called personality or 'mood'. You can list the current contexts by using the command `termbot -l`. This idea is 100% inspired by Daniel Miessler's [Fabric](https://github.com/danielmiessler/fabric)'s usage of "patterns".
-
-### Interactive Mode
-
-This mode allows for continuous interaction until terminated by a `ctrl+c` command. This mode provides a Terminal User Interface (TUI) for a real-time chat-like experience. Use the command `termbot -i` to start.
-
-### Prompt Mode
-
-This mode facilitates a one-time interaction. It is also the mode in which you can feed local files into Termbot to parse, analyse and respond using the `/file:path/to/my/file.txt` command. This is extremely handy to analyse file contents, code, etc. It can handle multiple files in the same prompt.
-
-## Custom Modes and Additional Features
-
-Enable custom features using command line arguments such as:
-- Slim Mode by calling `-s`, which omits the "Termbot 3000" banner for a cleaner interface.
-- Verbose mode by calling `-v`, adding useful debug information and command stats to output.
-
-Termbot can also handle input in form of local files or piped stdout, making it quite flexible in terms of usage:
+Termbot can handle input from local files or piped stdout, making it quite flexible in terms of usage:
 
   ```shell
   # Analyzing local files
-  termbot -p "Explain what /file:app.py does and analyze any potential errors"
+  termbot -f config.yaml -p "Explain what this file does and analyze any potential errors"
 
   # Piping stdout into termbot
   cat README.md | termbot -p "What is this file about?"
-
   ```
+  
+  Or, "zero prompt mode":
+  ```bash
+termbot -f script.py -c code_analyzer
+```
+  
+  where `code_analyzer` could be a generic context or prompt, that "analyzes code" or something.
 
-## Collaboration
+# Suggested Usage
 
-Contributions to Termbot are welcomed, particularly in areas such as code linting, improvements in naming conventions, function callings, and general efficiency/readability improvements.
+aliasing Termbot:
 
-## Roadmap/Wishlist
+`alias t=termbot`
 
-- [CANCELLED] Add Anthropic's Claude 3 LLM Model as an alternative
-- [x] Add Groq AI LLM API capability
-- [x] Fix Verbose + Slim mode
-- [ ] Improve Performance: Functions are too bloaty and slow
-- [X] Add an "Examples" Section
-- [X] Improve Efficiency: Import Colors, ASCII banner as modules when necessary 
-- [X] Add capability to handle more than 1 file, or even recursively.
-- [ ] Implement in-memory sessions to continue conversation threads
-- [ ] Implement /url: argument to scrape web pages for data
+Also, if ANSI colors are not available (slim mode), we can simply alias `-m` together
+# Modes of Operation
+
+### Context Mode 
+
+In this mode, you can create or edit custom context files in the context directory. This will provide instructions on how the Termbot responds to the given prompts, the so-called personality or 'mood'. You can list the current contexts by using the command `termbot -l`. This idea is 100% inspired by Daniel Miessler's [Fabric](https://github.com/danielmiessler/fabric)'s usage of "patterns".
+
+Context files are inside `$HOME/.config/termbot/context/` folder. They do not need to follow any format and can be raw files without any extension (i.e. "default", "analyze_document", etc).
+## Zero prompt option 
+
+Requires input file `-f` flag and a context file `-c` flag:
+
+`termbot -c analyze_script -f script.py`
+
+Where "`analyze_script`" is a context file with specific instructions. 
+
+## File path examples:
+
+  `-f` can be used with either absolute or relative paths (The program with first seek relative, then absolute path if the first fails).
+
+Hence:
+
+`termbot -f hello.py `
+
+Will seek first for hello.py in the current directory. If it's not found, it will search at `/hello.py`
+
+## Dry Run & Verbosity:
+
+Dry Run (`-d`) will print the prompt WITHOUT sending it to the LLM. This is useful for testing purposes (Whem using stdin pipes, files, etc.)
+
+Verbosity (`-v` ) will simply be explicit and print the user prompt, system prompt and the LLM response.
+
+
+## Releases & Versions
+
+- `beta`: Early prototype version
+- `v1.0.0`: Final Python-based Termbot version ([view here](https://github.com/Argandov/termbot/tree/v1.0.0))
+- `v2.0.0`: Full rewrite in Go — this is the current and recommended version
