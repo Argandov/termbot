@@ -131,7 +131,7 @@ func buildCLI() *cobra.Command {
 					fmt.Fprintln(os.Stderr, err)
 					os.Exit(1)
 				}
-				prompt = fmt.Sprintf("%s\n\nfile %s contents:\n\n%s", prompt, inputFile, fileContent)
+				prompt = fmt.Sprintf("%s\n\n(file %s contents:)\n\n%s", prompt, inputFile, fileContent)
 			} else if prompt == "" && inputFile == "" && contextName == "default" {
 				cmd.Help()
 				os.Exit(0)
@@ -167,43 +167,45 @@ func buildCLI() *cobra.Command {
 func runApp(prompt string, verbose bool, contextName string, dryRun bool, slimMode bool) {
 
 	systemPrompt := readContextFile(contextName)
+	response := llm.Call_openai(prompt, systemPrompt)
 
-	if !slimMode {
-		// ANSI Colored Output
-		if dryRun {
-			fmt.Printf("\033[90m[Prompt]\n\n%v\n\033[0m", prompt)
-			fmt.Println()
-			fmt.Printf("\033[90m[System Prompt]\n\n%v\n\033[0m", systemPrompt)
-			fmt.Println()
-		} else if verbose && !dryRun {
-			fmt.Printf("\033[90m[Prompt]\n\n%v\n\033[0m", prompt)
-			fmt.Println()
-			fmt.Printf("\033[90m[System Prompt]\n\n%v\n\033[0m", systemPrompt)
-			fmt.Println()
-			response := llm.Call_openai(prompt, systemPrompt)
-			fmt.Printf("\033[35m[LLM Response]\n%v\033[0m\n", response)
-		} else if !verbose && !dryRun {
-			response := llm.Call_openai(prompt, systemPrompt)
-			fmt.Printf("\033[35m%v\033[0m\n", response)
-		}
-	} else {
-		// Slim Mode (No ANSI colors)
-		if dryRun {
-			fmt.Printf("[Prompt]\n\n%v\n", prompt)
-			fmt.Println()
-			fmt.Printf("[System Prompt]\n\n%v\n", systemPrompt)
-			fmt.Println()
-		} else if verbose && !dryRun {
-			fmt.Printf("[Prompt]\n\n%v\n", prompt)
-			fmt.Println()
-			fmt.Printf("[System Prompt]\n\n%v\n", systemPrompt)
-			fmt.Println()
-			response := llm.Call_openai(prompt, systemPrompt)
-			fmt.Printf("[LLM Response]\n%v\n", response)
-		} else if !verbose && !dryRun {
-			response := llm.Call_openai(prompt, systemPrompt)
-			fmt.Printf("%v\n", response)
-		}
-
+	// CONTROL FLOW:
+	if dryRun {
+		fmt.Printf("%s\n\n%v\n\n", "[Prompt]", prompt)
+		fmt.Println()
+		fmt.Printf("%s\n\n%v\n\n", "[System Prompt]", systemPrompt)
+		fmt.Println()
+		os.Exit(0)
 	}
+
+	if verbose && slimMode {
+		fmt.Printf("%s\n\n%v\n\n", "[prompt]", prompt)
+		fmt.Println()
+		fmt.Printf("%s\n\n%v\n\n", "[system prompt]", systemPrompt)
+		fmt.Println()
+		fmt.Printf("%s\n%v\n\n", "[LLM response]", response)
+		os.Exit(0)
+	}
+
+	if !verbose && slimMode {
+		fmt.Println(response)
+		os.Exit(0)
+	}
+
+	if verbose && !slimMode {
+		var promptColor string
+		var systemPromptColor string
+		promptColor = "\033[90m[Prompt]\033[0m"
+		systemPromptColor = "\033[90m[System Prompt]\033[0m"
+		fmt.Printf("%s\n\n%v\n\n", promptColor, prompt)
+		fmt.Println()
+		fmt.Printf("%s\n\n%v\n\n", systemPromptColor, systemPrompt)
+		fmt.Printf("\033[35m%s\033[0m\n", response)
+		os.Exit(0)
+	}
+	if !verbose && !slimMode {
+		fmt.Printf("\033[35m%s\033[0m\n", response)
+		os.Exit(0)
+	}
+
 }
