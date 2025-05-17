@@ -2,6 +2,8 @@
 
 Termbot is a command-line tool for interacting with OpenAI’s GPT directly from your terminal.
 
+![termbot-sample](img/termbot-screenshot.png)
+
 ---
 
 ℹ️ **Version Note**
