@@ -1,4 +1,4 @@
-module termbot
+module github.com/Argandov/termbot
 
 go 1.22.1
 

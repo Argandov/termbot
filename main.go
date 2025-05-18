@@ -9,8 +9,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"termbot/helpers"
-	"termbot/llm"
+	"github.com/Argandov/termbot/helpers"
+	"github.com/Argandov/termbot/llm"
 )
 
 func main() {
